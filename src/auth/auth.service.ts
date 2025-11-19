@@ -1,0 +1,62 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { hashPassword, comparePassword } from '../common/utils/hash.util';
+import { JwtUtil } from 'src/common/utils/decoder';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private usersService: UsersService,
+    private jwt: JwtService,
+    private JwtUtil: JwtUtil,
+  ) {}
+
+  async register(dto) {
+    const existing = await this.usersService.findByEmail(dto.email);
+    if (existing) throw new UnauthorizedException('Email already exists');
+
+    const passwordHash = await hashPassword(dto.password);
+
+    const user = await this.usersService.create({
+      ...dto,
+      passwordHash,
+    });
+
+    return user;
+  }
+
+  async login(dto) {
+    const user = await this.usersService.findByEmail(dto.email);
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    if (user.isBlocked) {
+      throw new UnauthorizedException(
+        'Your account has been blocked by admin.',
+      );
+    }
+    const valid = await comparePassword(dto.password, user.passwordHash);
+    if (!valid) throw new UnauthorizedException('Invalid credentials');
+
+    // console.log('test 1 for role', user.role);
+    const token = await this.jwt.signAsync({
+      sub: user._id,
+      role: user.role,
+    });
+
+    const decoded = this.JwtUtil.decode(token);
+
+    return {
+      token,
+      expiresAt: decoded?.expiresAt,
+      expiresIn: decoded?.expiresAt - decoded?.issuedAt,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    };
+    // return { token };
+  }
+}
