@@ -34,19 +34,35 @@ export class PostsService {
     }
 
     const [posts, total] = await Promise.all([
-      this.model.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }),
+      this.model
+        .find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .populate('authorId', 'name email'),
       this.model.countDocuments(filter),
     ]);
+
+    const formattedPosts = posts.map((post) => {
+      const obj = post.toObject();
+      return {
+        ...obj,
+        author: obj.authorId,
+        authorId: undefined,
+      };
+    });
     return {
       total,
       page,
       limit,
-      posts,
+      posts: formattedPosts,
     };
   }
 
   async getOne(isAdmin: boolean, id: string) {
-    const post = await this.model.findById(id);
+    const post = await this.model
+      .findById(id)
+      .populate('authorId', 'name email');
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -56,7 +72,18 @@ export class PostsService {
         'This post is not accessible at the moment.',
       );
     }
-    return post;
+
+    const authorId = (post.authorId as any)._id;
+
+    const formattedPost = {
+      ...post.toObject(),
+      author: post.authorId,
+      authorId: undefined,
+    };
+
+    return formattedPost;
+
+    // return post;
   }
 
   create(authorId: string, dto) {
@@ -64,7 +91,7 @@ export class PostsService {
   }
 
   update(id: string, dto) {
-    console.log('updating post with ID:', id, 'with data:', dto);
+    // console.log('updating post with ID:', id, 'with data:', dto);
     return this.model.findByIdAndUpdate(id, dto, { new: true });
   }
 

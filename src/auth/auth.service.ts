@@ -30,14 +30,14 @@ export class AuthService {
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
+    const valid = await comparePassword(dto.password, user.passwordHash);
+    if (!valid) throw new UnauthorizedException('Invalid credentials');
+
     if (user.isBlocked) {
       throw new UnauthorizedException(
         'Your account has been blocked by admin.',
       );
     }
-    const valid = await comparePassword(dto.password, user.passwordHash);
-    if (!valid) throw new UnauthorizedException('Invalid credentials');
-
     // console.log('test 1 for role', user.role);
     const token = await this.jwt.signAsync({
       sub: user._id,

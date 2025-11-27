@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { JwtGuard } from '../common/guards/jwt.guard';
-import { OwnerGuard } from '../common/guards/owner.guard';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { CreatePostDto, UpdatePostDto } from './schemas/post.dto';
@@ -21,6 +20,7 @@ import type { CreatePostDtoType, UpdatePostDtoType } from './schemas/post.dto';
 import { AdminOrOwnerGuard } from 'src/common/guards/adminOrOwner.guard';
 import { AdminGuard } from 'src/common/guards/admin.guard';
 import { JwtOptionalGuard } from 'src/common/guards/jwtOption.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('posts')
 export class PostsController {
@@ -37,7 +37,7 @@ export class PostsController {
     // console.log('GetAll - User:', req);
     const isAdmin = req.user?.role === 'admin';
 
-    console.log('isAdmin:', isAdmin);
+    // console.log('isAdmin:', isAdmin);
     return this.postsService.getAll({
       page: page ? parseInt(page, 10) : undefined,
       limit: limit ? parseInt(limit, 10) : undefined,
@@ -64,7 +64,7 @@ export class PostsController {
     return this.postsService.create(user.sub, dto);
   }
 
-  @UseGuards(JwtGuard, OwnerGuard)
+  @UseGuards(JwtGuard, AdminOrOwnerGuard)
   @Put(':id')
   update(
     @Param('id') id: string,
