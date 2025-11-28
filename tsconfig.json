@@ -20,6 +20,5 @@
     "declaration": true,
     "removeComments": true,
     "isolatedModules": false,
-     "ignoreDeprecations": "5.0"
   }
 }
