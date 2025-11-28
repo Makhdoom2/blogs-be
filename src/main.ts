@@ -1,14 +1,46 @@
+// import { NestFactory } from '@nestjs/core';
+// import { AppModule } from './app.module';
+
+// async function bootstrap() {
+//   const app = await NestFactory.create(AppModule);
+//   app.setGlobalPrefix('api');
+//   app.enableCors({
+//     origin: 'http://localhost:3000', // frontend URL
+//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+//     // credentials: true,
+//   });
+//   await app.listen(process.env.PORT ?? 3000);
+// }
+// bootstrap();
+
+///for vercel dep below
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import express from 'express';
+import serverless from 'serverless-http';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+const server = express();
+
+async function createNestApp() {
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   app.setGlobalPrefix('api');
   app.enableCors({
     origin: 'http://localhost:3000', // frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    // credentials: true,
   });
-  await app.listen(process.env.PORT ?? 3000);
+  await app.init();
+  return server;
 }
-bootstrap();
+
+export const handler = serverless(server);
+
+// for local dev
+if (process.env.NODE_ENV !== 'production') {
+  createNestApp().then(() => {
+    server.listen(3000, () =>
+      console.log('NestJS running locally on http://localhost:3000'),
+    );
+  });
+}
