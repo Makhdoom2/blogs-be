@@ -23,13 +23,48 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is the backend API for a Blogging Platform built using **NestJS**, a powerful **Node.js** framework for building efficient and scalable server-side applications. The API supports a blogging platform with features like user authentication, role-based access control (RBAC), and CRUD operations for blog posts.
+
+### Key Features
+
+- **User Authentication**: Register and login with JWT authentication.
+- **Role-Based Access Control (RBAC)**: 
+  - Users can manage their own blog posts.
+  - Admins can manage all posts (approve, publish, delete) and user permissions.
+- **CRUD Blog Posts**:
+  - Users can create, read, update, and delete their own posts.
+  - Admins have full control over posts (approve, delete posts).
+- **Admin Dashboard**:
+  - Admins can approve user posts, block/unblock users, and manage user roles.
+- **Pagination**: Paginated blog post listings.
+- **Search and Filter**: Search blog posts by title.
+- **Image Upload**: Optional image upload for blog posts (base64, with plans to integrate with AWS S3).
+
+## Tech Stack
+
+- **NestJS**: A framework for building scalable applications with Node.js and TypeScript.
+- **TypeScript**: For static typing and better developer experience.
+- **MongoDB**: NoSQL database to store user data and blog posts.
+- **Mongoose**: ODM (Object Data Modeling) library for MongoDB.
+- **JWT**: JSON Web Tokens for secure authentication and user sessions.
+- **Passport.js**: Authentication middleware used with JWT.
+- **Bcrypt**: For securely hashing user passwords.
+- **Zod**: Type-safe schema validation library for data validation.
 
 ## Project setup
 
 ```bash
 $ npm install
 ```
+### Configure Environment Variables
+
+Create a `.env` file in the root directory and add the following environment variables:
+
+```env
+PORT=4000
+MONGO_URI=your-mongodb-connection-string
+JWT_SECRET=your-secret-key
+
 
 ## Compile and run the project
 
@@ -43,6 +78,52 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+
+### Endpoints
+
+#### Authentication Endpoints
+
+- **POST** `/api/auth/register`  
+  Register a new user.
+
+- **POST** `/api/auth/login`  
+  Login and receive a JWT token.
+
+#### Blog Endpoints
+
+- **GET** `/api/posts`  
+  Fetch all blog posts (public endpoint).  
+  - **Admin**: If the request contains an admin token, all posts (both published and unpublished) will be returned.  
+  - **User/No Token**: If no token or a user token is provided, only published posts will be returned.
+
+- **GET** `/api/posts/:id`  
+  Fetch a single blog post by ID.
+
+- **POST** `/api/posts`  
+  Create a new blog post (requires JWT authentication).
+
+- **PUT** `/api/posts/:id`  
+  Update an existing blog post (requires JWT authentication and the user must be the blog owner).
+
+- **DELETE** `/api/posts/:id`  
+  Delete a blog post (requires JWT authentication; can be performed by the admin or the blog owner).
+
+- **PUT** `/api/posts/:id/publish`  
+  Publish a blog post (requires Admin role).
+
+#### Admin Endpoints
+
+- **GET** `/api/admin/users`  
+  Fetch all users (requires Admin role).
+
+- **PATCH** `/api/admin/users/:id/permission`  
+  Block or unblock a user (requires Admin role).
+
+- **PUT** `/api/admin/posts/:id/approve`  
+  Approve a blog post for publication (requires Admin role).
+
+
 
 ## Run tests
 
