@@ -1,12 +1,15 @@
 {
   "name": "blogs-be",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
+  },
   "scripts": {
-    "build": "nest build",
+    "build": "npx nest build",
+    "postinstall": "chmod +x ./node_modules/.bin/nest || true",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
