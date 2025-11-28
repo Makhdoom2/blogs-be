@@ -4,8 +4,8 @@ import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
 import { Post, PostSchema } from './schemas/post.schema';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtOptionalGuard } from 'src/common/guards/jwtOption.guard';
-import { JwtUtil } from 'src/common/utils/decoder';
+import { JwtOptionalGuard } from '../common/guards/jwtOption.guard';
+import { JwtUtil } from '../common/utils/decoder';
 
 @Module({
   imports: [

@@ -8,19 +8,17 @@ import {
   Delete,
   Body,
   UseGuards,
-  UsePipes,
   Req,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { JwtGuard } from '../common/guards/jwt.guard';
 import { GetUser } from '../common/decorators/get-user.decorator';
-import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
+import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { CreatePostDto, UpdatePostDto } from './schemas/post.dto';
 import type { CreatePostDtoType, UpdatePostDtoType } from './schemas/post.dto';
-import { AdminOrOwnerGuard } from 'src/common/guards/adminOrOwner.guard';
-import { AdminGuard } from 'src/common/guards/admin.guard';
-import { JwtOptionalGuard } from 'src/common/guards/jwtOption.guard';
-import { AuthGuard } from '@nestjs/passport';
+import { AdminOrOwnerGuard } from '../common/guards/adminOrOwner.guard';
+import { AdminGuard } from '../common/guards/admin.guard';
+import { JwtOptionalGuard } from '../common/guards/jwtOption.guard';
 
 @Controller('posts')
 export class PostsController {
