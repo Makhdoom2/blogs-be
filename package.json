@@ -11,7 +11,7 @@
     "build": "npx nest build",
     "postinstall": "chmod +x ./node_modules/.bin/nest || true",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node dist/main.js",
+    "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
