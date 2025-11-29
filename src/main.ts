@@ -23,6 +23,9 @@ import serverless from 'serverless-http';
 
 const server = express();
 
+server.use(express.json({ limit: '5mb' }));
+server.use(express.urlencoded({ extended: true, limit: '5mb' }));
+
 async function createNestApp() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   app.setGlobalPrefix('api');
