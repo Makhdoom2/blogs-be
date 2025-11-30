@@ -13,13 +13,16 @@ export class AuthService {
   ) {}
 
   async register(dto) {
-    const existing = await this.usersService.findByEmail(dto.email);
+    const email = dto.email.toLowerCase();
+
+    const existing = await this.usersService.findByEmail(email);
     if (existing) throw new UnauthorizedException('Email already exists');
 
     const passwordHash = await hashPassword(dto.password);
 
     const user = await this.usersService.create({
       ...dto,
+      email,
       passwordHash,
     });
 
@@ -27,7 +30,10 @@ export class AuthService {
   }
 
   async login(dto) {
-    const user = await this.usersService.findByEmail(dto.email);
+    const email = dto.email.toLowerCase();
+
+    const user = await this.usersService.findByEmail(email);
+
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const valid = await comparePassword(dto.password, user.passwordHash);
