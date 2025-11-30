@@ -23,9 +23,10 @@ export class AuthService {
     const passwordHash = await hashPassword(dto.password);
     // console.log('dto in auth service', ...dto, passwordHash, email);
     const user = await this.usersService.create({
-      ...dto,
+      name: dto.name,
+      email: email,
       passwordHash,
-      email,
+      role: dto.role ?? 'user',
     });
 
     return user;
