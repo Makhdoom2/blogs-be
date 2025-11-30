@@ -13,12 +13,15 @@ export class AuthService {
   ) {}
 
   async register(dto) {
-    const email = dto.email.toLowerCase();
+    const data = { ...dto };
+
+    const email = data.email.toLowerCase();
 
     const existing = await this.usersService.findByEmail(email);
     if (existing) throw new UnauthorizedException('Email already exists');
 
     const passwordHash = await hashPassword(dto.password);
+    // console.log('dto in auth service', ...dto, passwordHash, email);
     const user = await this.usersService.create({
       ...dto,
       passwordHash,
