@@ -19,11 +19,10 @@ export class AuthService {
     if (existing) throw new UnauthorizedException('Email already exists');
 
     const passwordHash = await hashPassword(dto.password);
-
     const user = await this.usersService.create({
       ...dto,
-      email,
       passwordHash,
+      email,
     });
 
     return user;
