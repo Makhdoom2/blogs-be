@@ -1,4 +1,8 @@
 <p align="center">
+  <h2 align="center">Blogs Backend — Nest.js (DEMO PROJECT)</h2>
+</p>
+
+<p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
